@@ -1,0 +1,56 @@
+<html>
+
+<head>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script> 
+<script src="http://localhost:1337/socket.io/socket.io.js"></script> 
+<script> 
+var socket =  new io.Socket("localhost", {port: 1337});
+
+function connect() {
+  socket.connect(); 
+  socket.on("message", handle_message); 
+}
+
+function handle_message(data) {
+  var message = JSON.parse(data);
+  $("#messages").append("<p><strong>" + message.user + ":</strong> " + message.message + "</p>");
+}
+
+function send(user, message) {
+  var data = {action: "message", 
+              user: user, 
+              message: message};
+  socket.send(JSON.stringify(data));
+}
+
+function sendOpts(lang) {
+  var data = {action: "options",
+              lang: lang};
+  socket.send(JSON.stringify(data));
+}
+
+$(function () {
+  connect();
+  socket.on("connect", function () { sendOpts(lang.value); } );
+});
+</script> 
+</head>
+
+<body>
+  <label for="lang">Language:</label>
+  <select id="lang" type="dropdown" onchange="sendOpts(this.value);">
+    <option value="en">en</option>
+    <option value="fr" selected="selected">fr</option>
+    <option value="es">es</option>
+  </select>
+
+  <div id="messages">
+  </div>
+
+  <input id="username" type="text" value="Thom"/> 
+  <input id="message" type="text" value=""/>
+
+  <button type="button" onclick="send(username.value, message.value);">Send</button>
+</body>
+</html>
