@@ -42,17 +42,21 @@
 
             if (message.action === "message") {
                 for (recipient in clients) {
-                    if (clients.hasOwnProperty(recipient) && clients[recipient] !== client) {
-                        translateUrl = "/language/translate/v2" +
-                            "?key=AIzaSyDQvD2F99tMbspU6aA6-WWFQ1nZ1Ote0eA" +
-                            "&source=" + client.lang +
-                            "&target=" + clients[recipient].lang +
-                            "&q=" + qs.escape(message.message);
-                        
-                        https.get(
-                            { host: "www.googleapis.com",
-                              path: translateUrl },
-                            receiveTrans(clients[recipient], message));
+                    if (clients.hasOwnProperty(recipient)) {
+                        if (clients[recipient] === client) {
+                            client.send(JSON.stringify(message));
+                        } else {
+                            translateUrl = "/language/translate/v2" +
+                                "?key=AIzaSyDQvD2F99tMbspU6aA6-WWFQ1nZ1Ote0eA" +
+                                "&source=" + client.lang +
+                                "&target=" + clients[recipient].lang +
+                                "&q=" + qs.escape(message.message);
+                            
+                            https.get(
+                                { host: "www.googleapis.com",
+                                  path: translateUrl },
+                                receiveTrans(clients[recipient], message));
+                        }
                     }
                 }
 
