@@ -5,9 +5,17 @@
     io = require('socket.io'),
     https = require('https'),
     qs = require('querystring'),
+    node_static = require('node-static'),
     server = http.createServer(),
     socket = io.listen(server),
-    clients = [];
+    clients = [],
+    file_server = new (node_static.Server)('./client');
+
+    server.on("request", function (req, res) {
+        req.addListener("end", function () {
+            file_server.serve(req, res);
+        });
+    });
 
     socket.on("connection", function (client) {
         clients.push(client);
