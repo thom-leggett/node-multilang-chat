@@ -11,7 +11,6 @@ var chatServer = (function () {
     
     server.listen(1337);
        
-
     function receiveTrans(recipient, message) {
         return function (res) {
             res.on('data', function (d) {
