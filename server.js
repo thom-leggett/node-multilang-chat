@@ -12,7 +12,7 @@
     file_server = new (node_static.Server)('./client');
 
     server.on("request", function (req, res) {
-        req.addListener("end", function () {
+        req.on("end", function () {
             file_server.serve(req, res);
         });
     });
